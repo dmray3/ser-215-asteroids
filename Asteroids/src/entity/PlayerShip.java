@@ -17,7 +17,11 @@ public class PlayerShip extends Entity {
 	
 	//dup image object for screenwrap effect
 	private BufferedImage drawImage;
-	
+
+    //image for lives
+    private BufferedImage livesImage;
+	private BufferedImage icon;
+
 	//animations
 	private ArrayList<BufferedImage[]> animationArrayList;
 	
@@ -31,8 +35,8 @@ public class PlayerShip extends Entity {
 	private boolean isSpawning;
 	private long spawnTimer;
 
-    // sound info
-    private Sounds sound;
+    // thrust info
+    private Sounds thrust;
 
     public PlayerShip(){
 		super();
@@ -49,7 +53,7 @@ public class PlayerShip extends Entity {
 		currentShip = 0;
 		maxMissiles = 3;
 		turnSpeed = 6;
-        sound = new Sounds("/resources/sounds/thrust.wav");
+        thrust = new Sounds("/resources/sounds/thrust.wav");
 
 		
 		x = GamePanel.WIDTH / 2 - radius;
@@ -63,7 +67,9 @@ public class PlayerShip extends Entity {
 		}
 		
 		drawImage = image;
-		
+        livesImage = image;
+		icon = image;
+
 		animation = new Animation();
 		animationArrayList = new ArrayList<BufferedImage[]>();
 		for (Accel a : Accel.values()) {
@@ -81,15 +87,36 @@ public class PlayerShip extends Entity {
 		
 	}
 
-    public Sounds getSound() {
-        return sound;
+    public int getCurrentShip() {
+        return currentShip;
+    }
+
+    public void setCurrentShip(int currentShip) {
+        this.currentShip = currentShip;
+    }
+
+    public Sounds getThrust() {
+        return thrust;
     }
 	
 	public BufferedImage getImage() {
-		return drawImage;
+		return icon;
 	}
-	
+
+    public BufferedImage getLivesImage() {
+        return livesImage;
+    }
+
 	public void spawn() {
+        try{
+            image = ImageIO.read(getClass().getResourceAsStream("/resources/ships/" + shipArray[currentShip] + ".png"));//load the current ship
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        drawImage = image;
+        icon = image;
 		isDead = false;
 		spawnTimer = System.nanoTime();
 		invulnerable = isSpawning = true;
@@ -221,7 +248,7 @@ public class PlayerShip extends Entity {
 		if (k == KeyEvent.VK_LEFT) turn(-turnSpeed);
 		if (k == KeyEvent.VK_RIGHT) turn(turnSpeed);
 		if (k == KeyEvent.VK_UP) {
-            sound.loop();
+            thrust.loop();
             thrust(true);
         }
 		if (k == KeyEvent.VK_SPACE) shoot();
@@ -231,7 +258,7 @@ public class PlayerShip extends Entity {
 		if (k == KeyEvent.VK_LEFT && angularVelocity == -turnSpeed) turn(0);
 		if (k == KeyEvent.VK_RIGHT && angularVelocity == turnSpeed) turn(0);
 		if (k == KeyEvent.VK_UP) {
-            sound.stop();
+            thrust.stop();
             thrust(false);
         }
 	}

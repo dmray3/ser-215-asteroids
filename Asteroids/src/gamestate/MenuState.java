@@ -6,6 +6,7 @@ import java.awt.event.*;
 import entity.Sounds;
 import main.GamePanel;
 import tilemap.DebrisField;
+import tilemap.HUD;
 import tilemap.Images;
 
 public class MenuState extends GameState{
@@ -31,7 +32,6 @@ public class MenuState extends GameState{
 			mainbg = new Images("/resources/backgrounds/mainbg.png");
 			debrisField = new DebrisField();
             music = new Sounds("/resources/sounds/menumusic.wav");
-            music.loop();
 
 			title = new Images("/resources/backgrounds/asteroidsTitle.png");
 			title.setPosition((GamePanel.WIDTH / 2) - (title.getWidth() / 2), 125);
@@ -57,12 +57,13 @@ public class MenuState extends GameState{
 	
 	public void init() {
 		currentChoice = 0;
+        music.stop();
+	    music.loop();
 	}
-	
-	public void selection(){
+
+    public void selection(){
 		if (currentChoice==0){
-			gsm.setState(GameStateManager.LEVEL1STATE);
-            music.stop();
+			gsm.setState(GameStateManager.PLAYERSELECTSTATE);
 		}
 		if (currentChoice==1){
 			gsm.setState(GameStateManager.HIGHSCORESTATE);
@@ -76,9 +77,9 @@ public class MenuState extends GameState{
 	
 	@Override
 	public void update() {
-		
+
 		debrisField.update();
-		
+
 	}
 	
 	@Override

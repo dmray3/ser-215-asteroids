@@ -3,6 +3,7 @@ package gamestate;
 import java.awt.Graphics2D;
 
 import entity.PlayerShip;
+import tilemap.HUD;
 import tilemap.Images;
 
 
@@ -24,14 +25,18 @@ public class Level1State extends LevelState {
 		catch(Exception e){
 			e.printStackTrace();
 		}
+        init();
 		
 	}
 
-	@Override
+    @Override
 	public void init() {
 		
 		player.setState(this);
-		
+		player.setLives(3);
+        player.setScore(0);
+        player.spawn();
+        
 		super.init();
 		
 	}
@@ -39,6 +44,14 @@ public class Level1State extends LevelState {
 	@Override
 	public void update() {
 		super.update();
+		
+		if (asteroids.isEmpty() && enemies.isEmpty()) {
+			if (difficulty % 3 == 2) {
+				refresh(); //spawnBoss();
+			} else {
+				refresh();
+			}
+		}
 	}
 	
 	@Override
@@ -54,6 +67,13 @@ public class Level1State extends LevelState {
 	@Override
 	public void keyReleased(int k) {
 		super.keyReleased(k);
+	}
+	
+	protected void refresh() {
+		if (difficulty % 3 == 0) {
+			numAsteroids++;
+		}
+		super.init();
 	}
 	
 }
