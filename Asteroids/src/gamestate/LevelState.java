@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Random;
 
+import enemies.Alien1;
 import entity.Sounds;
 import main.GamePanel;
 import tilemap.DebrisField;
@@ -66,12 +67,10 @@ public abstract class LevelState extends GameState {
 									  Math.random() / 30, 2, asteroidHP);
 			addAsteroid(a);
 		}
-		/*
 		for (int i =0;i < numEnemies;i++){
-			Enemy a = new Enemy(this);
+			Alien1 a = new Alien1(this);
 			addEnemy(a);
 		}
-		*/
 		gameOver = false;
 		
 		
@@ -96,6 +95,9 @@ public abstract class LevelState extends GameState {
 			for (int i = 0; i < asteroids.size(); i++) {
 				asteroids.get(i).update();
 			}
+		}
+		for (int i = 0;i<enemies.size();i++){
+			enemies.get(i).update();
 		}
 		
 		if (!gameOver) {
@@ -127,6 +129,11 @@ public abstract class LevelState extends GameState {
 		if (!asteroids.isEmpty()) {
 			for (int i = 0; i < asteroids.size(); i++) {
 				asteroids.get(i).draw(g);
+			}
+		}
+		if (asteroids.isEmpty()){
+			for(int i = 0;i<enemies.size();i++){
+				enemies.get(i).draw(g);
 			}
 		}
 		
@@ -176,7 +183,7 @@ public abstract class LevelState extends GameState {
 	public void removeAsteroid(Asteroid a) {
 		asteroids.remove(a);
 	}
-	public void removeAlien(Enemy enemy){
+	public void removeEnemy(Enemy enemy){
 		enemies.remove(enemy);
 	}
 	

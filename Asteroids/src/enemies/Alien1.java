@@ -12,7 +12,9 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 import entity.Asteroid;
 import entity.Enemy;
+import entity.Entity;
 import entity.Missile;
+import entity.Sounds;
 import gamestate.LevelState;
 
 /**
@@ -22,10 +24,14 @@ public class Alien1 extends Enemy {
 	
 	private AffineTransform at;
 	private BufferedImage image;
+	private int enemyHP;
+	private int enemyValue=1000;
+	private LevelState state;
 	
     public Alien1(LevelState currentState) {
     	
     	super(currentState);
+    	this.state = state;
 		
     	try{
 			image = ImageIO.read(getClass().getResourceAsStream("/resources/enemies/alienShip.png"));//load alien1
@@ -45,24 +51,30 @@ public class Alien1 extends Enemy {
 		missiles = new ArrayList<Missile>();
 		invulnerable = false;
 		
+		
 		if (rand.nextBoolean()) {
 			if (rand.nextBoolean()) {
 				x = GamePanel.WIDTH + radius;
-				velocity = new double[] {rand.nextDouble() * -5 - 5, 0};
+				velocity = new double[] {rand.nextDouble() * -5 - 1, 0};
+				//movement track
+				
 			}
 			else {
 				x = -radius;
-				velocity = new double[] {rand.nextDouble() * 5 + 5, 0};
+				velocity = new double[] {rand.nextDouble() * 5 + 1, 0};
+				
 			}
 			y = rand.nextInt(GamePanel.HEIGHT - width) + radius;
 		} else {
 			if (rand.nextBoolean()) {
 				y = GamePanel.HEIGHT + radius;
-				velocity = new double[] {0, rand.nextDouble() * -5 - 5};
+				velocity = new double[] {0, rand.nextDouble() * -5 - 1};
+				
 			}
 			else {
 				y = -radius;
-				velocity = new double[] {0, rand.nextDouble() * 5 + 5};
+				velocity = new double[] {0, rand.nextDouble() * 5 + 1};
+				
 			}
 			x = rand.nextInt(GamePanel.WIDTH - width) + radius;
 		}
@@ -86,15 +98,6 @@ public class Alien1 extends Enemy {
 	
 	public LevelState getState() {
 		return currentState;
-	}
-	
-	public void thrust(boolean b){
-		if (!isAccelerating) {
-			isAccelerating = b;
-		}
-		else if (!b && isAccelerating) {
-			isAccelerating = b;
-		}
 	}
 	
 	public void turn(int a) {
@@ -138,6 +141,15 @@ public class Alien1 extends Enemy {
 				isDead = true;
 			}
 		}
+		//screen detection
+		if (x <= -width) x = GamePanel.WIDTH + x;
+		else if (x >= GamePanel.WIDTH + width) x = x - GamePanel.WIDTH;
+		if (y <= -width) y = GamePanel.HEIGHT + y;
+		else if (y >= GamePanel.HEIGHT + width) y = y - GamePanel.HEIGHT;
+		
+		//movement tracks
+		this.moveTrackOne();
+		
 		
 		// update angle
 		angle += angularVelocity;
@@ -148,7 +160,43 @@ public class Alien1 extends Enemy {
 				missiles.get(i).update();
 			}
 		}
-		
 	}
+    public void hit(int damage, Alien1 e){
+		if (e.enemyHP>0){
+			this.enemyHP--;
+		}
+	}
+    public void moveTrackOne(){
+    	if (Math.random()>=0 && Math.random()<=.25){
+    		this.x+=.01;
+    		this.y+=.01;
+    	}
+    	if (Math.random()>=.51 && Math.random()<=.74){
+    		for (int i = 0;i<100;i++){
+    			this.x+=.01;
+    			this.y-=.01;
+    		}
+    	}
+    	if (Math.random()>=.26 && Math.random()<=.5){
+    		for (int i = 0;i<100;i++){
+    			this.x-=.01;
+    			this.y+=.01;
+    		}
+    	}
+    	if (Math.random()>=.75 && Math.random()<=1){
+    		for (int i = 0;i<100;i++){
+    			this.x+=.01;
+    		}
+    	}
+    }
+    
+    //missile hit detection
+    public void takeDamage(Missile m){
+    	if (m.getPosition()==this.getPosition()){
+    		this.enemyHP-=1;//decrement one
+    	}
+    }
+    
+
 	
 }
